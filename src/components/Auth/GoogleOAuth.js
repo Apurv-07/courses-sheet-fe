@@ -12,7 +12,7 @@ const GoogleOAuth = () => {
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           try {
-            const res = await axios.post(`${API_BASE_URL}/api/auth/google`, {
+            const res = await axios.post(`${API_BASE_URL}/auth/google`, {
               idToken: credentialResponse.credential,
             });
             localStorage.setItem("token", res.data.token);
