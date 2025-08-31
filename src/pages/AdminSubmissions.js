@@ -1,10 +1,5 @@
 import React from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getAdminDashboard,
-  getAllSubmissions,
-  getAllSubmissions as fetchAllSubmissions,
-} from "../api/apiClient";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 
 const AdminSubmissions = () => {

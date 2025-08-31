@@ -13,6 +13,7 @@ import {
   updateSubject,
   deleteSubject,
   getTopics,
+  getUser,
   createTopic,
   updateTopic,
   deleteTopic,
@@ -56,13 +57,10 @@ const Dashboard = () => {
   } = useQuery(
     ["users"],
     async () => {
-      const res = await fetch("/api/user", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (!res.ok) return [];
-      return res.json();
+      const res = await getUser();
+      return res.data;
     },
-    { enabled: user?.role === "admin" }
+    { enabled: !!user && user.role === "admin" } // ensures user exists first
   );
 
   // Fetch all subjects for assignment

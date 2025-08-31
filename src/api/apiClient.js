@@ -1,7 +1,9 @@
 const api = axios.create({
-  baseURL: "https://courses-sheet-be.onrender.com/api",
+  // baseURL: "https://courses-sheet-be.onrender.com/api",
+  baseURL: "http://localhost:5000/api",
 });
 export const getAdminDashboard = () => api.get("/admin-dashboard");
+
 // Topic CRUD: subject required only for creation
 export const createTopic = (data) => {
   if (!data.subject) throw new Error("'subject' is required in topic payload");
@@ -29,16 +31,18 @@ export const deleteExercise = (subjectId, topicId, exerciseId) =>
 export const register = (data) => api.post("/auth/signup", data);
 export const login = (data) => api.post("/auth/login", data);
 // Admin: Assign/Remove subject to/from user
-export const assignSubjectToUser = (userId, subjectId) =>
-  api.post("/assign-subject", { userId, subjectId });
+export const assignSubjectToUser = (userId, subjectId) => {
+  console.log("IIIIIIIIIIIIIIIIII", userId, subjectId);
+  return api.post("/assign-subject", { userId, subjectId });
+};
 export const removeSubjectFromUser = (userId, subjectId) =>
   api.post("/remove-subject", { userId, subjectId });
 
 // User: Dashboard and progress
 export const getUserDashboard = () => api.get("/dashboard");
+export const getUser = () => api.get("/user");
 export const updateUserProgress = (data) => api.post("/progress", data);
 import axios from "axios";
-
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
