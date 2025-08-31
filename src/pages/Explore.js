@@ -125,12 +125,16 @@ const Explore = () => {
                     {user && assignedIds.has(subj._id) ? (
                       <div className="mt-4 text-green-600">Assigned</div>
                     ) : (
-                      <button
-                        onClick={() => assignCourse(subj._id)}
-                        className="mt-4 bg-blue-600 text-white px-3 py-1 rounded-md"
-                      >
-                        Assign Course
-                      </button>
+                      <>
+                        {user.role == "user" && (
+                          <button
+                            onClick={() => assignCourse(subj._id)}
+                            className="mt-4 bg-blue-600 text-white px-3 py-1 rounded-md"
+                          >
+                            Assign Course
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
