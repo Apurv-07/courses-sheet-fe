@@ -1,6 +1,6 @@
 const api = axios.create({
-  // baseURL: "https://courses-sheet-be.onrender.com/api",
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://courses-sheet-be.onrender.com/api",
+  // baseURL: "http://localhost:5000/api",
 });
 export const getAdminDashboard = () => api.get("/admin-dashboard");
 
