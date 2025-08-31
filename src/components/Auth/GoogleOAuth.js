@@ -1,35 +1,20 @@
-import React from "react";
-// import { GoogleLogin } from "react-google-login";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 const GoogleOAuth = () => {
   const history = useHistory();
-
-  //   const responseGoogle = async (response) => {
-  //     console.log(response);
-  //     const { tokenId } = response;
-  //     try {
-  //       const res = await axios.post("/api/auth/google", { idToken: tokenId });
-  //       localStorage.setItem("token", res.data.token);
-  //       history.push("/dashboard");
-  //     } catch (error) {
-  //       console.error("Google login error:", error);
-  //     }
-  //   };
 
   return (
     <div className="flex justify-center">
       <GoogleLogin
         onSuccess={async (credentialResponse) => {
           try {
-            const res = await axios.post(
-              "https://courses-sheet-be.onrender.com/api/auth/google",
-              {
-                idToken: credentialResponse.credential,
-              }
-            );
+            const res = await axios.post(`${API_BASE_URL}/api/auth/google`, {
+              idToken: credentialResponse.credential,
+            });
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
             history.push("/dashboard");
