@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/apiClient";
 import { Link, useHistory } from "react-router-dom";
 import GoogleOAuth from "../../components/Auth/GoogleOAuth";
+import { LoginContext } from "../../loginContext/LoginContextFile";
 
 const Login = () => {
   const [error, setError] = useState("");
+  const { user, setUser } = useContext(LoginContext);
   const history = useHistory();
   const mutation = useMutation(login, {
     onSuccess: (data) => {
       localStorage.setItem("token", data.data.token);
-      localStorage.setItem("user", JSON.stringify(data.data.user));
+      setUser(data.data.user);
       history.push("/dashboard");
     },
     onError: (err) => setError(err.response?.data?.message || "Login failed"),

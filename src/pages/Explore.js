@@ -1,16 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useHistory } from "react-router-dom";
-import { useState } from "react";
-import { getSubjects, assignSubjectToUser } from "../api/apiClient";
+import { useState, useContext } from "react";
+import {
+  getSubjects,
+  assignSubjectToUser,
+  removeSubjectFromUser,
+} from "../api/apiClient";
+import { LoginContext } from "../loginContext/LoginContextFile";
 
 const Explore = () => {
-  const [user, setUser] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("user"));
-    } catch {
-      return null;
-    }
-  });
+  const { user, setUser } = useContext(LoginContext);
   console.log("Explore page user:", user);
   const history = useHistory();
   const queryClient = useQueryClient();
@@ -27,6 +26,16 @@ const Explore = () => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const assignSubject = useMutation(
     ({ userId, subjectId }) => assignSubjectToUser(userId, subjectId),
+    {
+      onSuccess: (data) => {
+        const updatedUser = data.data.data; // assuming API returns updated user
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      },
+    }
+  );
+  const removeSubject = useMutation(
+    ({ userId, subjectId }) => removeSubjectFromUser(userId, subjectId),
     {
       onSuccess: (data) => {
         const updatedUser = data.data.data; // assuming API returns updated user
@@ -90,11 +99,15 @@ const Explore = () => {
     grouped[cat].push(subj);
   });
 
-  const assignCourse = (subjectId) => {
+  const assignCourse = (subjectId, unassign) => {
     if (!user) {
       history.push("/login");
     } else {
       const userId = user._id;
+      if (unassign) {
+        removeSubject.mutate({ userId, subjectId });
+        return;
+      }
       assignSubject.mutate({ userId, subjectId });
     }
   };
@@ -117,13 +130,29 @@ const Explore = () => {
                     className="bg-white rounded shadow p-5 flex flex-col cursor-pointer hover:bg-blue-50"
                   >
                     <div onClick={() => setSelectedSubject(subj)}>
-                      <div className="text-lg font-bold mb-2">{subj.name}</div>
+                      <div className="flex justify-between">
+                        <div className="text-lg font-bold mb-2">
+                          {subj.name}
+                        </div>
+                        {user && assignedIds.has(subj._id) && (
+                          <div className="mt-4 text-green-600">Assigned</div>
+                        )}
+                      </div>
                       <div className="text-sm text-gray-600 mb-2">
                         {subj.topics?.length || 0} Topics
                       </div>
                     </div>
                     {user && assignedIds.has(subj._id) ? (
-                      <div className="mt-4 text-green-600">Assigned</div>
+                      <>
+                        {user.role == "user" && (
+                          <button
+                            onClick={() => assignCourse(subj._id, "unassign")}
+                            className="mt-4 bg-red-600 text-white px-3 py-1 rounded-md"
+                          >
+                            Unassign Course
+                          </button>
+                        )}
+                      </>
                     ) : (
                       <>
                         {user.role == "user" && (

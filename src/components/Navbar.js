@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { LoginContext } from "../loginContext/LoginContextFile";
 
 const Navbar = () => {
-  const user = JSON.parse(localStorage.getItem("user")); // Assuming user info is stored in localStorage
+  const history = useHistory();
+  const { user, setUser } = useContext(LoginContext);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    window.location.href = "/login"; // Redirect to login page
+    setUser(null);
+    history.push("/login");
   };
 
   return (
